@@ -1,0 +1,33 @@
+---
+title: "Notes"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Centrality Measures
+
+[Borgatti Paper](https://link.springer.com/content/pdf/10.1007/s10588-006-7084-x.pdf)
+
+The more connected you are the closer you are to the center of the network (Hence *centrality*).
+
+Why detect centrality (remove the most influential terrorist maximize effort payoff, or minimize disruption to the network).
+
+### Social Capital
+
+Actual or potential resource linked to possession of a network of relationships, which can be convertible into economic capital.
+
+Be careful about confounds: network centrality (being popular at school) may be correlated with other factors (e.g., wearing expensive clothes, having money).
+
+### Quick overview
+
+**Degree centrality.** In, out and total degree. Indegree = colsums (I received Y nominations), outdegree = rowsums (I sent X links). How many connections you have.
+
+$\text{degree} = \sum\text{number of times selected}$
+
+**Closeness.** Fast reachability to any other actor in the network. Higher is less central. igraph gives you the inverse of the closeness.
+
+**Betweeness.** Proportion of times an actor is in between two other actors (shortest path).
+
+**Eigenvector.** Also called power. How central an actor is as a function of the centrality of the connections of that actor. Connections are weighted by their own connections.\
