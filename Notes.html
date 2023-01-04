@@ -15,6 +15,69 @@ span.underline{text-decoration: underline;}
 div.column{display: inline-block; vertical-align: top; width: 50%;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -57,6 +120,9 @@ ul.task-list{list-style: none;}
 
 <section id="centrality-measures" class="level2">
 <h2 class="anchored" data-anchor-id="centrality-measures">Centrality Measures</h2>
+<div class="cell">
+
+</div>
 <p><a href="https://link.springer.com/content/pdf/10.1007/s10588-006-7084-x.pdf">Borgatti Paper</a></p>
 <p>The more connected you are the closer you are to the center of the network (Hence <em>centrality</em>).</p>
 <p>Why detect centrality (remove the most influential terrorist maximize effort payoff, or minimize disruption to the network).</p>
@@ -67,13 +133,55 @@ ul.task-list{list-style: none;}
 </section>
 <section id="quick-overview" class="level3">
 <h3 class="anchored" data-anchor-id="quick-overview">Quick overview</h3>
-<p><strong>Degree centrality.</strong> In, out and total degree. Indegree = colsums, outdegree = rowsums. How many connections you have.</p>
-<p>\centering <span class="math inline">\(\text{degree} = \sum\text{number of times selected}\)</span></p>
+<p><strong>Degree centrality.</strong> In, out and total degree. Indegree = colsums (i was nominated <span class="math inline">\(x\)</span> times), outdegree = rowsums (I sent <span class="math inline">\(x\)</span> links). How many connections you have.</p>
+<p><span class="math inline">\(\text{degree} = \sum\text{number of times selected}\)</span></p>
+<p>Opportunity to influence or be influenced directly.</p>
 <p><strong>Closeness.</strong> Fast reachability to any other actor in the network. Higher is less central. igraph gives you the inverse of the closeness.</p>
+<p>Marginals of the geodesic distance matrix.</p>
+<p><span class="math inline">\(\text{closeness} = \sum\text{shortest path length to each other node}\)</span></p>
 <p><strong>Betweeness.</strong> Proportion of times an actor is in between two other actors (shortest path).</p>
-<p><strong>Eigenvector.</strong> Also called power. How central an actor is as a function of the centrality of the connections of that actor.<br>
-</p>
+<p><span class="math inline">\(\text{betweeness} = \sum\frac{\text{Number of shortest paths from U to W that go through target}}{\text{Number of shortest paths from U to W}}\)</span></p>
+<p><strong>Eigenvector.</strong> Also called power. How central an actor is as a function of the centrality of the connections of that actor. Connections are weighted by their own connections.</p>
+<p>Start with <span class="math inline">\(\lambda = [1,1,1,1,…,1]\)</span>. Multiply matrix by Lambda, and get a new Lambda. Repeat until there is no more change.</p>
+<p><span class="math display">\[
+EC_i = \frac{1}{max\lambda}\times(b_{i,j}\lambda)
+\]</span></p>
+<div class="cell" data-hash="Notes_cache/html/unnamed-chunk-2_9cf0d821001cd1e17234dcd5c1628f22">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>() <span class="sc">|&gt;</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="dv">10</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">10</span>) <span class="sc">|&gt;</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>lambdas <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">10</span>, <span class="at">nrow =</span> <span class="dv">11</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>lambdas[<span class="dv">1</span>,] <span class="ot">=</span> lambda</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){lambda <span class="ot">=</span> lambda <span class="sc">%*%</span> A;lambda<span class="ot">=</span><span class="dv">1</span><span class="sc">/</span><span class="fu">max</span>(lambda)<span class="sc">*</span>lambda;lambdas[i<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">=</span> lambda}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>lambdas <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">'iteration'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iteration =</span> <span class="fu">as.numeric</span>(iteration)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(V1<span class="sc">:</span>V10) <span class="sc">|&gt;</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> iteration, <span class="at">y =</span> value, <span class="at">color =</span> name, <span class="at">group =</span> name))<span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">show.legend =</span> F)<span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">"Iteration"</span>, <span class="at">y=</span> <span class="st">"Lambda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Notes_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
+</section>
+<section id="key-actor-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="key-actor-analysis">Key actor analysis</h2>
+<p>All centrality measures are mostly related to each other. When and how they differ can tell you about the structure of the matrix.</p>
+<p>Relies mostly on betweenness and eigenvector centralities.</p>
+<p>high b - low EC = critical gatekeeper</p>
+<p>low B - High EC = connected to important people but no more</p>
+<div class="cell" data-hash="Notes_cache/html/unnamed-chunk-3_392a3a17758c922520d298c65724e166">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>actors <span class="ot">=</span> <span class="dv">25</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">=</span> <span class="fu">runif</span>(actors<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>() <span class="sc">|&gt;</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> actors)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(A) <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>net <span class="ot">=</span> <span class="fu">graph_from_adjacency_matrix</span>(A)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">B =</span> <span class="fu">betweenness</span>(net),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">EC =</span> <span class="fu">eigen_centrality</span>(net)<span class="sc">$</span>vector) <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(B,EC))<span class="sc">+</span><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Notes_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
 
 </main>

@@ -1,0 +1,25 @@
+name,value,new
+1,Authors,authors
+2,Author(s) ID,authors_id
+3,Title,title
+4,Year,year
+5,Source title,journal
+6,Volume,vol
+7,Issue,iss
+8,Art. No.,art_no
+9,Page start,page_start
+10,Page end,page_end
+11,Page count,page_count
+12,Cited by,citations
+13,DOI,doi
+14,Link,link
+15,Affiliations,affiliations
+16,Authors with affiliations,authors_affiliations
+17,Abstract,abstract
+18,Author Keywords,keywords_author
+19,Index Keywords,keywords_index
+20,Document Type,type
+21,Publication Stage,stage
+22,Open Access,oa
+23,Source,source
+24,EID,eid
