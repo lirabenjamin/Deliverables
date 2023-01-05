@@ -667,11 +667,191 @@ The empty model correctly addresses social dependence. The original unadjusted m
 
 1.  **Does the spatial dependence based on neighboring structure remain significant at the .05 significance level with the newest data?**
 
-    sdf
+```{r}
+
+library(maptools)
+library(geosphere)
+library(spdep)
+library(tigris) #install it
+options(tigris_use_cache = TRUE)
+```
+
+First we read in data from the pdf.
+
+```{r}
+# Read in data from pdf
+# install.packages("pdftools")
+library(pdftools)
+library(tidyverse)
+
+pdf <- pdf_text("2022-15th-RSPS.pdf")
+pdf <- pdf[4] |> strsplit("\n")
+
+data <- enframe(pdf[[1]][7:56]) |> 
+  separate(value, c('no', 'rank','state', 'gdp', 'migration', 'payroll'),sep = '\\s\\s+') |>
+  select(rank:payroll)
+```
+
+And create the map polygon object
+
+```{r}
+library(maptools)
+states<-rgdal::readOGR("tl_2012_us_state.shp") 
+"%ni%" <- Negate("%in%") #negate funtion
+states<-states[states$NAME %ni% c('Alaska','American Samoa','Commonwealth of the Northern Mariana Islands','Guam','Hawaii','United States Virgin Islands','Puerto Rico', 'District of Columbia'),]
+# plot(states)
+```
+
+```{r}
+# library(tigris)
+# library(maptools)
+# states <- tigris::states(cb = TRUE, class="sp")
+# "%ni%" <- Negate("%in%")
+# plot(states)
+# 
+# states<-states[states$NAME %ni% c('Alaska','American Samoa','Commonwealth of the Northern Mariana Islands','Guam','Hawaii','United States Virgin Islands','Puerto Rico', 'District of Columbia'),]
+# plot(states)
+```
+
+Now we must create the neighboring structure with the `poly2nb` function.
+
+```{r}
+library(spdep)
+neighbors <- poly2nb(states, queen = TRUE)
+weights <- nb2listw(neighbors)
+coords <- coordinates(states)
+```
+
+and add the variable to the polygon object.
+
+```{r}
+# add wealth variable to the state polygon object
+states@data$wealth<-as.numeric(data$rank[match(states@data$NAME,data$state)])
+```
+
+We now have everything ready to run Moran's I.
+
+```{r}
+moran_i <- moran.test(states@data$wealth,weights, na.action=na.exclude)
+moran_i
+```
+
+We can make a plot showing states, colored by the wealth variable, and so on.
+
+```{r}
+library(RColorBrewer)
+library(classInt)
+
+colors <- brewer.pal(9, "YlOrRd")
+class <- classIntervals(states@data$wealth, 9, style = "quantile")
+colcode <- findColours(class, colors, digits = 2)
+
+# plot country
+plot(states,
+ border = "gray20",
+ bg = "slategray",
+ col = colcode)
+
+# add neighbor lines
+plot(
+neighbors,
+coords,
+col = rgb(205, 204, 0, 255, max = 255),
+lwd = 2,
+add = T
+)
+
+# add legend 
+legend(
+"bottomright",
+legend = names(attr(colcode, "table")),
+fill = attr(colcode, "palette"),
+title = "Ranked Wealth"
+)
+
+title(
+main = glue::glue(
+"States wealth distribution as of 2012 from neighbors\nMoran's I = {round(moran_i$estimate[1],4)} (p = {round(moran_i$p.value,10)})"
+),
+sub = "Data source: American Community Survey, 2021 estimates\nALEC-LAFFER STATE ECONOMIC COMPETITIVENESS INDEX\nAvailable from:https://www.alec.org/app/uploads/2011/11/RSPS_4th_Edition.pdf"
+)
+
+```
 
 2.  **Did the spatial dependence based on randomly generated ties yield similar inferences?**
 
-sdf
+```{r}
+library(gtools)
+state_names <- as.character(states@data$NAME)
+z <-
+  permutations(
+    n = length(state_names),
+    r = 2,
+    v = state_names,
+    repeats.allowed = T
+  )
+
+# Get 500 random connections
+random_connections <- z |> 
+  as.data.frame() |> 
+  as_tibble() |> 
+  filter(V1 != V2) |> # remove self-selection
+  slice_sample(n = 500)
+ 
+library(igraph)
+g <- graph.data.frame(random_connections,directed = FALSE)
+random_adjacency <- 
+  get.adjacency(g) |> 
+  as.matrix()
+
+g <- graph.adjacency(random_adjacency)
+
+random_adjacency <- random_adjacency/rowSums(random_adjacency)
+summary(rowSums(random_adjacency))
+isolates_to_zero = function(matrix){matrix[is.na(matrix)] <- 0; return(matrix)}
+
+random_adjacency <- random_adjacency |> isolates_to_zero()
+random_adjacency <-random_adjacency[order(rownames(random_adjacency)), order(colnames(random_adjacency))]
+ 
+random_weights <-mat2listw(random_adjacency)
+summary(random_weights)
+
+V(g)$weight<-1
+g<-simplify(g)#
+g
+
+random_moran <- moran.test(states@data$wealth,random_weights, zero.policy=TRUE, na.action=na.exclude)
+
+plot(
+  states,
+  border = "gray20",
+  bg = "slategray",
+  col = colcode
+)
+plot(
+  random_weights,
+  coords,
+  col = rgb(205, 204, 0, 255 / 4, max = 255),
+  lwd = 2,
+  add = T
+)
+legend(
+  "bottomright",
+  legend = names(attr(colcode, "table")),
+  fill = attr(colcode, "palette"),
+  title = "Ranked Wealth"
+)
+title(
+main = glue::glue(
+"States wealth distribution as of 2012 from neighbors\nMoran's I = {round(random_moran$estimate[1],4)} (p = {round(random_moran$p.value,10)})"
+),
+sub = "Data source: American Community Survey, 2021 estimates\nALEC-LAFFER STATE ECONOMIC COMPETITIVENESS INDEX\nAvailable from:https://www.alec.org/app/uploads/2011/11/RSPS_4th_Edition.pdf"
+)
+
+```
+
+As seen in the analyses, permuting proximity such that states are randomly assorted resulted in a negligible and nonsignificant Moran's I suggesting that the observed spatial dependence was not caused randomly.
+
 
 # Deliverable 11
 
@@ -683,15 +863,182 @@ sdf
 
 1.  **What Moran's I indicator (1k or 75-miles) is stronger?**
 
-sdf
+We start with downloading and cleaning the data.
+
+```{r}
+url <- paste( 'http://nces.ed.gov/ipeds/datacenter/data/HD2010.zip')
+url2 <- paste('http://nces.ed.gov/ipeds/datacenter/data/IC2010_AY.zip')
+##This captures the working directory 
+a<-getwd()
+a
+#Using the working directory information we download the data in that folder as follows
+download.file(url, destfile = paste(a,"HD2010.zip",sep="/"))
+#Loading the dataset 
+download.file(url2, destfile = paste(a,"IC2010_AY.zip",sep="/"))
+a <- read.csv(unz("HD2010.zip", "hd2010.csv")) 
+names(a)
+b<- read.csv(unz("IC2010_AY.zip", "ic2010_ay.csv")) 
+names(b)
+a<-a[a$SECTOR==1|a$SECTOR==2|a$SECTOR==4|a$SECTOR==5|a$SECTOR==6,]
+#a<-a[a$STABBR=="GA",]
+table(a$STABBR)
+a<-a[a$LOCALE<14,] #Cities only
+dim(a)
+n<-names(b)
+b<-cbind(rownames(b),b)
+names(b)<-n
+a<-merge(a,b[,c("UNITID","TUITION2")], by="UNITID")
+head(a)
+str(a$TUITION2)
+a$TUITION2<-as.numeric(as.character(a$TUITION2))
+head(a$TUITION2)
+summary(a$TUITION2[a$SECTOR==1])
+summary(a$TUITION2[a$SECTOR==2])
+summary(a$TUITION2[a$SECTOR==4])
+summary(a$TUITION2[a$SECTOR==5])
+summary(a$TUITION2[a$SECTOR==6])
+# a$TUITION3.1<-as.numeric(as.character(a$TUITION3))
+# head(a[is.na(a$TUITION3.1),c("TUITION3","SECTOR","INSTNM")])
+a<-a[!is.na(a$TUITION2),]
+dim(a)
+#bounding box
+a<-a[a$LONGITUD > -124.848 &
+       a$LONGITUD < -66.886 &
+       a$LATITUDE > 24.3964 &
+       a$LATITUDE < 49.3844, ]
+dim(a)
+
+#combine the first two columns to be coordinates:
+coords<-cbind(a$LONGITUD,a$LATITUDE)
+coordsPub<-cbind(a[a$SECTOR==1,]$LONGITUD,a[a$SECTOR==1,]$LATITUDE)
+coordsPri<-cbind(a[a$SECTOR==2,]$LONGITUD,a[a$SECTOR==2,]$LATITUDE)
+```
+
+Now we create the two neighbors specifications.
+
+```{r}
+neighbors_1<-knn2nb(knearneigh(coords,k=1))
+neighbors_75m<-dnearneigh(coords, 0, 120.701, row.names = a$name, longlat = TRUE) #75 miles
+```
+
+... and the associated weights objects
+```{r}
+#Now create a list, similar to an edgelist in spatial form
+weights_1 <-nb2listw(neighbors_1, zero.policy=TRUE)
+weights_75m <-nb2listw(neighbors_75m, zero.policy=TRUE)
+```
+
+We now run the moran's tests.
+```{r}
+moran1n <- moran.test(a$TUITION2,weights_1, na.action=na.omit, zero.policy =TRUE)
+moran75m <- moran.test(a$TUITION2,weights_75m, na.action=na.omit, zero.policy =TRUE)
+```
+
+Moran's I is `r moran1n$estimate[1] |> round(2)` in the 1 nearest neighbor case and `r moran75m$estimate[1] |> round(2)` for the 75 miles case. 
+
 
 2.  **Why would this be the case?**
 
-sdf
+It seems like closer neighbors have a stronger influence, and neigbors more than 75 miles away are less important on average. This makes sense given the first law of geography: "Everything is related, but things that are closer are more related to each other than things that are far apart". Also, the fact that we are workign with in-state tuition might make it such that crossing state lines makes the effect of other states (with different legislations and so on) more different.
 
 3.  **Please plot the two corresponding maps**
 
-sdf
+This is the plot for the nearest neighbor.
+```{r}
+plot(
+  states,
+  border = "gray20",
+  bg = "slategray",
+  col = "gray90"
+)
+plot(
+  neighbors_1,
+  coords,
+  col = rgb(205, 204, 0, 255, max = 255),
+  lwd = 2,
+  add = T,
+  pch = 22
+)
+points(
+  coordsPub,
+  col = "#ff00669b",
+  pch = 22,
+  bg = "#ff00669b"
+)
+points(
+  coordsPri,
+  col = "#66ff009b",
+  pch = 22,
+  bg = "#66ff009b"
+)
+title(
+  cex.main = 1.5,
+  col.main = "grey11",
+  font.main = 2,
+  main = "Closest neighbor specification",
+  cex.sub = 1.15,
+  col.sub = "grey11",
+  font.sub = 2,
+)
+legend(
+  title = "Sector",
+  "bottomright",
+  legend = c("Public, n=734", "Private, n=1605"),
+  fill = c("#ff00669b", "#66ff009b"),
+  bty = "n",
+  cex = 1.5,
+  y.intersp = 0.8
+)
+```
+
+This is the plot for the 75 miles radius neighbor.
+
+```{r}
+plot(
+  states,
+  border = "gray20",
+  bg = "slategray",
+  col = "gray90"
+)
+plot(
+  neighbors_75m,
+  coords,
+  col = rgb(205, 204, 0, 255, max = 255),
+  lwd = 2,
+  add = T,
+  pch = 22
+)
+points(
+  coordsPub,
+  col = "#ff00669b",
+  pch = 22,
+  bg = "#ff00669b"
+)
+points(
+  coordsPri,
+  col = "#66ff009b",
+  pch = 22,
+  bg = "#66ff009b"
+)
+title(
+  cex.main = 1.5,
+  col.main = "grey11",
+  font.main = 2,
+  main = "Closest neighbor specification",
+  cex.sub = 1.15,
+  col.sub = "grey11",
+  font.sub = 2,
+)
+legend(
+  title = "Sector",
+  "bottomright",
+  legend = c("Public, n=734", "Private, n=1605"),
+  fill = c("#ff00669b", "#66ff009b"),
+  bty = "n",
+  cex = 1.5,
+  y.intersp = 0.8
+)
+```
 
 # Final
 
