@@ -15,3 +15,10 @@ sp
 spData
 sf
 spdep
+pdftools
+maptools
+tigris
+geosphere
+RColorBrewer
+classInt
+gtools

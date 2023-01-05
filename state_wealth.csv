@@ -1,0 +1,52 @@
+STABBR,Rank,State,AbsoluteDomesticMigration,PersonalIncomePerCapita,NonFarmPayrollEmployment,Rank01,ID
+AK,7,Alaska,29,9,2,0.87755102,Alaska 
+AL,23,Alabama,14,19,40,0.551020408,Alabama
+AR,10,Arkansas,16,11,22,0.816326531,Arkansas
+AZ,15,Arizona,3,42,10,0.714285714,Arizona
+CA,46,California,49,35,37,0.081632653,California
+CO,24,Colorado,10,44,19,0.530612245,Colorado
+CT,43,Connecticut,42,26,42,0.142857143,Connecticut
+DC,,DC,12,15,13,,District of Columbia
+DE,32,Delaware,18,33,33,0.367346939,Delaware
+FL,8,Florida,1,25,15,0.857142857,Florida
+GA,33,Georgia,5,48,35,0.346938776,Georgia
+HI,12,Hawaii,33,7,11,0.775510204,Hawaii
+IA,28,Iowa,38,17,25,0.448979592,Iowa
+ID,17,Idaho,13,39,6,0.673469388,Idaho
+IL,48,Illinois,48,34,47,0.040816327,Illinois
+IN,47,Indiana,32,46,48,0.06122449,Indiana
+KS,34,Kansas,40,20,28,0.326530612,Kansas
+KY,31,Kentucky,15,29,38,0.387755102,Kentucky
+LA,27,Louisiana,43,3,32,0.469387755,Louisiana
+MA,45,Massachusetts,44,28,44,0.102040816,Massachusetts
+MD,21,Maryland,41,12,18,0.591836735,Maryland
+ME,20,Maine,24,18,29,0.612244898,Maine
+MI,50,Michigan,47,50,50,0,Michigan
+MN,41,Minnesota,37,36,30,0.183673469,Minnesota
+MO,38,Missouri,19,37,39,0.244897959,Missouri
+MS,39,Mississippi,34,16,46,0.224489796,Mississippi
+MT,3,Montana,20,4,8,0.959183673,Montana
+NC,22,North Carolina,4,45,23,0.571428571,North Carolina
+ND,4,North Dakota,31,2,3,0.93877551,North Dakota
+NE,26,Nebraska,35,23,16,0.489795918,Nebraska
+NH,29,New Hampshire,22,38,20,0.428571429,New Hampshire
+NJ,42,New Jersey,46,27,34,0.163265306,New Jersey
+NM,5,New Mexico,23,6,9,0.918367347,New Mexico
+NV,18,Nevada,6,49,4,0.653061224,Nevada
+NY,40,New York,50,22,26,0.204081633,New York
+OH,49,Ohio,45,47,49,0.020408163,Ohio
+OK,9,Oklahoma,21,5,17,0.836734694,Oklahoma
+OR,30,Oregon,11,43,27,0.408163265,Oregon
+PA,37,Pennsylvania,39,24,31,0.265306122,Pennsylvania
+RI,35,Rhode Island,36,13,43,0.306122449,Rhode Island
+SC,25,South Carolina,7,31,36,0.510204082,South Carolina
+SD,11,South Dakota,27,10,12,0.795918367,South Dakota
+TN,36,Tennessee,8,41,45,0.285714286,Tennessee
+TX,2,Texas,2,21,7,0.979591837,Texas
+UT,14,Utah,17,32,5,0.734693878,Utah
+VA,6,Virginia,12,15,13,0.897959184,Virginia
+VT,19,Vermont,28,14,24,0.632653061,Vermont
+WA,13,Washington,9,30,14,0.755102041,Washington
+WI,44,Wisconsin,30,40,41,0.12244898,Wisconsin
+WV,16,West Virginia,26,8,21,0.693877551,West Virginia
+WY,1,Wyoming,25,1,1,1,Wyoming
