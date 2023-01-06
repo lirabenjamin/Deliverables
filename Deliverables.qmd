@@ -1024,7 +1024,7 @@ title(
   cex.main = 1.5,
   col.main = "grey11",
   font.main = 2,
-  main = "Closest neighbor specification",
+  main = "75 mile radius specification",
   cex.sub = 1.15,
   col.sub = "grey11",
   font.sub = 2,
