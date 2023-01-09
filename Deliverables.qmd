@@ -1052,3 +1052,7 @@ legend(
   y.intersp = 0.8
 )
 ```
+
+# Final project
+
+See [here](http://lirabenjamin.github.io/final_paper/final_paper.html)
